@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WiseTools Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Manrope', 'sans-serif'],
+              display: ['Poppins', 'sans-serif'],
+            },
+            colors: {
+              glass: {
+                100: 'rgba(255, 255, 255, 0.1)',
+                200: 'rgba(255, 255, 255, 0.2)',
+                300: 'rgba(255, 255, 255, 0.3)',
+                border: 'rgba(255, 255, 255, 0.1)',
+              },
+              primary: '#1E3A8A',
+              accent: '#38bdf8',
+            },
+            animation: {
+              'float': 'float 6s ease-in-out infinite',
+              'fade-in': 'fadeIn 0.6s ease-out forwards',
+              'slide-up': 'slideUp 0.6s ease-out forwards',
+              'slide-left': 'slideLeft 0.5s ease-out forwards',
+              'pulse-glow': 'pulseGlow 2s infinite',
+              'shimmer': 'shimmer 2s linear infinite',
+            },
+            keyframes: {
+              float: {
+                '0%, 100%': { transform: 'translateY(0)' },
+                '50%': { transform: 'translateY(-10px)' },
+              },
+              fadeIn: {
+                '0%': { opacity: '0' },
+                '100%': { opacity: '1' },
+              },
+              slideUp: {
+                '0%': { opacity: '0', transform: 'translateY(20px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              },
+              slideLeft: {
+                 '0%': { opacity: '0', transform: 'translateX(20px)' },
+                 '100%': { opacity: '1', transform: 'translateX(0)' },
+              },
+              pulseGlow: {
+                '0%, 100%': { boxShadow: '0 0 10px rgba(56, 189, 248, 0.1)' },
+                '50%': { boxShadow: '0 0 25px rgba(56, 189, 248, 0.4)' },
+              },
+              shimmer: {
+                '0%': { backgroundPosition: '-1000px 0' },
+                '100%': { backgroundPosition: '1000px 0' }
+              }
+            }
+          },
+        },
+      }
+    </script>
+    <style>
+      body {
+        background: linear-gradient(135deg, #0f172a 0%, #172554 40%, #1e3a8a 80%, #0f172a 100%);
+        background-attachment: fixed;
+        color: white;
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+      
+      .glass-panel {
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+      }
+      
+      .glass-card {
+        background: linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      
+      .glass-card:hover {
+        background: linear-gradient(145deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%);
+        transform: translateY(-5px) scale(1.01);
+        border-color: rgba(56, 189, 248, 0.4);
+        box-shadow: 0 20px 40px -10px rgba(56, 189, 248, 0.15);
+      }
+      
+      .glass-input {
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: white;
+        transition: all 0.3s ease;
+      }
+      
+      .glass-input:focus {
+        outline: none;
+        border-color: #38bdf8;
+        background: rgba(0, 0, 0, 0.5);
+        box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+      }
+
+      .btn-tab {
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        transition: all 0.3s;
+        font-weight: 500;
+        border-bottom: 2px solid transparent;
+      }
+      .btn-tab:hover {
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      /* Inner Tool Panels (Default Dark) */
+      .tool-inner-panel {
+        background: rgba(15, 23, 42, 0.5);
+      }
+      
+      /* Utilities */
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: rgba(0,0,0,0.1);
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: rgba(255,255,255,0.2);
+        border-radius: 3px;
+      }
+      
+      /* Text Gradients */
+      .text-gradient {
+        background: linear-gradient(to right, #38bdf8, #818cf8);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      /* =========================================================================
+         LIGHT THEME REDESIGN - High Contrast & Clean UI
+         ========================================================================= */
+
+      /* Body & Background */
+      html.light body {
+        background: linear-gradient(to bottom, #F7F9FC, #ECEFF3) !important;
+        color: #334155 !important;
+      }
+
+      /* Typography High Contrast */
+      html.light h1, html.light h2, html.light h3, html.light h4, html.light h5, html.light h6 {
+        color: #0F172A !important;
+        font-weight: 700 !important;
+      }
+      
+      html.light .text-white { color: #0F172A !important; }
+      html.light .text-gray-100 { color: #1E293B !important; }
+      html.light .text-gray-200 { color: #334155 !important; }
+      html.light .text-gray-300 { color: #475569 !important; } /* Labels, subtext */
+      html.light .text-gray-400 { color: #64748B !important; }
+      html.light .text-gray-500 { color: #94A3B8 !important; }
+      
+      /* Gradient Text Overrides */
+      html.light .text-transparent.bg-clip-text.bg-gradient-to-r.from-white {
+        background: linear-gradient(to right, #0F172A, #334155) !important;
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+      }
+      
+      /* Navbar Redesign */
+      html.light nav {
+        background: rgba(255, 255, 255, 0.85) !important;
+        backdrop-filter: blur(12px) !important;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
+      }
+
+      /* Cards & Panels - Clean Light Surfaces */
+      html.light .glass-panel,
+      html.light .glass-card,
+      html.light .tool-inner-panel {
+        background: #FFFFFF !important;
+        backdrop-filter: none !important;
+        border: 1px solid rgba(0, 0, 0, 0.06) !important;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06) !important;
+        border-radius: 14px !important;
+      }
+
+      html.light .glass-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08) !important;
+        border-color: #3B82F6 !important;
+      }
+
+      /* Inputs - High Visibility */
+      html.light .glass-input, 
+      html.light input, 
+      html.light select, 
+      html.light textarea {
+        background-color: #F8FAFC !important;
+        border: 1px solid #D1D5DB !important;
+        color: #0F172A !important;
+        box-shadow: inset 0 1px 2px rgba(0,0,0,0.03) !important;
+      }
+      
+      html.light .glass-input:focus, 
+      html.light input:focus, 
+      html.light select:focus, 
+      html.light textarea:focus {
+        background-color: #FFFFFF !important;
+        border-color: #3B82F6 !important;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+      }
+      
+      html.light ::placeholder {
+        color: #6B7280 !important;
+      }
+
+      /* Dropdowns */
+      html.light select {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236B7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e") !important;
+      }
+      html.light select option {
+        background-color: #FFFFFF !important;
+        color: #1E293B !important;
+      }
+
+      /* Tool Tabs */
+      html.light .tab-btn {
+        background-color: #E2E8F0 !important;
+        color: #475569 !important;
+        border: 1px solid #CBD5E1 !important;
+      }
+      html.light .tab-btn:hover {
+        background-color: #CBD5E1 !important;
+      }
+      html.light .tab-btn.active-tab {
+        background: linear-gradient(135deg, #3B82F6, #60A5FA) !important;
+        color: #FFFFFF !important;
+        border: 1px solid #2563EB !important;
+        box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.3) !important;
+      }
+
+      /* Tool Action Buttons (Share, Reset, etc) */
+      html.light .tool-action-btn {
+        background-color: #FFFFFF !important;
+        border: 1px solid #E2E8F0 !important;
+        color: #334155 !important;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+      }
+      html.light .tool-action-btn:hover {
+        background-color: #F8FAFC !important;
+        border-color: #CBD5E1 !important;
+        color: #0F172A !important;
+      }
+      html.light .tool-action-btn svg {
+        stroke: #334155 !important;
+      }
+      html.light .tool-action-btn:hover svg {
+        stroke: #0F172A !important;
+      }
+
+      /* Buttons & Interactivity */
+      html.light .bg-white\/5 {
+        background-color: rgba(0, 0, 0, 0.04) !important;
+        border-color: rgba(0, 0, 0, 0.06) !important;
+        color: #334155 !important;
+      }
+      
+      html.light .hover\:bg-white\/10:hover {
+        background-color: rgba(0, 0, 0, 0.08) !important;
+      }
+      
+      /* Primary Buttons Gradient Fix */
+      html.light .from-cyan-600 { --tw-gradient-from: #2563EB !important; }
+      html.light .to-blue-700 { --tw-gradient-to: #3B82F6 !important; }
+      html.light .to-blue-600 { --tw-gradient-to: #3B82F6 !important; }
+
+      /* Color Overrides for Readability */
+      html.light .text-cyan-400 { color: #0284c7 !important; }
+      html.light .text-cyan-300 { color: #0369a1 !important; }
+      html.light .text-blue-400 { color: #2563eb !important; }
+      html.light .text-green-400 { color: #16a34a !important; }
+      html.light .text-red-400 { color: #dc2626 !important; }
+      html.light .text-yellow-400 { color: #d97706 !important; }
+      
+      /* Expense Tracker Specifics */
+      html.light .expense-type-btn {
+        opacity: 1 !important;
+        background-color: #F1F5F9 !important;
+        color: #64748B !important;
+        border: 1px solid #E2E8F0 !important;
+      }
+      html.light .expense-type-btn:hover {
+        background-color: #E2E8F0 !important;
+      }
+      html.light .expense-type-btn.active {
+        background: #FFFFFF !important;
+        font-weight: 700 !important;
+      }
+      html.light .expense-type-btn.active.income {
+        border-color: #16A34A !important;
+        color: #16A34A !important;
+        box-shadow: 0 0 0 1px #16A34A !important;
+      }
+      html.light .expense-type-btn.active.expense {
+        border-color: #DC2626 !important;
+        color: #DC2626 !important;
+        box-shadow: 0 0 0 1px #DC2626 !important;
+      }
+
+      /* Exceptions: Elements that must remain light/white text */
+      html.light .text-white.bg-gradient-to-r,
+      html.light .text-white.bg-cyan-600,
+      html.light .text-white.bg-blue-600,
+      html.light .text-white.bg-red-500,
+      html.light .text-white.bg-green-500,
+      html.light button.bg-gradient-to-r,
+      html.light .tab-btn.active-tab {
+        color: #FFFFFF !important;
+      }
+      
+      html.light .fill-current {
+        fill: currentColor;
+      }
+
+      /* Scrollbar */
+      html.light .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: rgba(0,0,0,0.2);
+      }
+      html.light .custom-scrollbar::-webkit-scrollbar-track {
+        background: rgba(0,0,0,0.05);
+      }
+
+      /* Charts */
+      html.light .recharts-cartesian-grid-horizontal line,
+      html.light .recharts-cartesian-grid-vertical line {
+        stroke: #E2E8F0 !important;
+      }
+      html.light .recharts-text {
+        fill: #64748B !important;
+      }
+
+      /* Tooltip Light Mode Fixes */
+      html.light .tooltip-text {
+        background-color: #FFFFFF !important;
+        color: #1F2937 !important;
+        border: 1px solid #E0E0E0 !important;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.12) !important;
+      }
+      html.light .tooltip-arrow {
+        border-top-color: #FFFFFF !important;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-router-dom": "https://aistudiocdn.com/react-router-dom@^7.10.0",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0",
+    "recharts": "https://aistudiocdn.com/recharts@^3.5.1",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.555.0",
+    "jspdf": "https://cdn.jsdelivr.net/npm/jspdf@2.5.1/+esm"
+  }
+}
+</script>
+</head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
