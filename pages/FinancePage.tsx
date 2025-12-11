@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Input, Select, ToolLayout, ResultCard, useCurrency, CurrencySelector, TabNavigation, useTheme } from '../components/SharedUI';
+import { Button, Input, Select, ToolLayout, ResultCard, useCurrency, CurrencySelector, TabNavigation, useTheme, safeJSONParse } from '../components/SharedUI';
 import { 
   Calculator, DollarSign, TrendingUp, Users, Calendar, 
   RefreshCw, PieChart, Briefcase, AlertCircle, Target, 
@@ -293,8 +293,7 @@ const SIPCalculator: React.FC<ToolProps> = ({ format, currency }) => {
 
 const ExpenseTracker: React.FC<{ currency: string; format: (n: number) => string }> = ({ currency, format }) => {
   const [expenses, setExpenses] = useState<Expense[]>(() => {
-    const saved = localStorage.getItem('expenses');
-    return saved ? JSON.parse(saved) : [];
+    return safeJSONParse('expenses', []);
   });
   const [title, setTitle] = useState('');
   const [amount, setAmount] = useState('');
@@ -515,7 +514,7 @@ const CompoundInterestCalculator: React.FC<ToolProps> = ({ format, currency }) =
 
 const DayWiseSavings: React.FC<ToolProps> = ({ format, currency }) => {
   const [savings, setSavings] = useState<{date: string, amount: number}[]>(() => {
-    const s = localStorage.getItem('daySavings'); return s ? JSON.parse(s) : [];
+    return safeJSONParse('daySavings', []);
   });
   const [amount, setAmount] = useState('');
   useEffect(() => localStorage.setItem('daySavings', JSON.stringify(savings)), [savings]);

@@ -4,7 +4,7 @@ import {
   Calculator, GraduationCap, Briefcase, Coffee, RefreshCw, Bot, 
   ArrowRight, Search, Zap, Clock, Star, Sparkles
 } from 'lucide-react';
-import { Card, Tooltip } from '../components/SharedUI';
+import { Card, Tooltip, safeJSONParse } from '../components/SharedUI';
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
@@ -13,8 +13,8 @@ const Home: React.FC = () => {
   const [recents, setRecents] = useState<any[]>([]);
 
   useEffect(() => {
-    const r = localStorage.getItem('recents');
-    if (r) setRecents(JSON.parse(r).slice(0, 4)); // Show top 4
+    const r = safeJSONParse('recents', []);
+    setRecents(r.slice(0, 4)); // Show top 4
   }, []);
 
   const categories = [

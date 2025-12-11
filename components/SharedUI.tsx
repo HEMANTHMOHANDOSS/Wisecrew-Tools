@@ -1,9 +1,68 @@
-
 import React, { useState, useEffect, createContext, useContext } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { LucideIcon, Share2, RefreshCw, Star, Info, ArrowLeft, Home, ChevronRight, Globe, Check, Palette, Languages, History, Download, Image as ImageIcon, Copy, Mic, Trophy, Medal } from 'lucide-react';
 import { AppTheme, AppLanguage, HistoryItem, UserProfile } from '../types';
 import jsPDF from 'jspdf';
+
+// --- Safe Parsing Utility ---
+export const safeJSONParse = (key: string, fallback: any) => {
+  if (typeof window === 'undefined') return fallback;
+  try {
+    const item = localStorage.getItem(key);
+    return item ? JSON.parse(item) : fallback;
+  } catch (error) {
+    console.warn(`Error parsing localStorage key "${key}":`, error);
+    return fallback;
+  }
+};
+
+// --- Error Boundary ---
+interface ErrorBoundaryProps {
+  children?: React.ReactNode;
+}
+
+interface ErrorBoundaryState {
+  hasError: boolean;
+}
+
+export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  constructor(props: ErrorBoundaryProps) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error: any) {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: any, errorInfo: any) {
+    console.error("ErrorBoundary caught an error", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-screen flex items-center justify-center bg-[#0f172a] text-white p-4 text-center">
+          <div className="glass-panel p-8 rounded-2xl max-w-md">
+            <h2 className="text-2xl font-bold mb-4 text-red-400">Something went wrong</h2>
+            <p className="text-gray-300 mb-6">A specific tool or component failed to load. This can happen due to saved data corruption or network issues.</p>
+            <button 
+              onClick={() => {
+                localStorage.clear();
+                window.location.reload();
+              }}
+              className="px-6 py-3 bg-gradient-to-r from-cyan-600 to-blue-600 rounded-xl font-bold hover:shadow-lg transition-all"
+            >
+              Reset App & Reload
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
 
 // --- Auth Context ---
 interface AuthContextType {
@@ -18,8 +77,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<UserProfile | null>(() => {
-    const saved = localStorage.getItem('user_profile_v2');
-    return saved ? JSON.parse(saved) : null;
+    return safeJSONParse('user_profile_v2', null);
   });
 
   useEffect(() => {
@@ -140,8 +198,7 @@ export const useGamification = () => {
 // --- Helper for Favorites ---
 export const useFavorites = () => {
   const [favorites, setFavorites] = useState<string[]>(() => {
-    const saved = localStorage.getItem('favorites');
-    return saved ? JSON.parse(saved) : [];
+    return safeJSONParse('favorites', []);
   });
 
   const toggleFavorite = (id: string) => {
@@ -171,8 +228,7 @@ export const useHistory = () => {
       result: String(result),
       timestamp: Date.now()
     };
-    // In a real app, this would sync to the user profile in AuthContext or backend
-    const currentHistory = JSON.parse(localStorage.getItem('tool_history') || '[]');
+    const currentHistory = safeJSONParse('tool_history', []);
     const newHistory = [newItem, ...currentHistory].slice(0, 50); // Keep last 50
     localStorage.setItem('tool_history', JSON.stringify(newHistory));
   };
@@ -184,8 +240,7 @@ export const useRecents = (toolId?: string, toolName?: string, path?: string) =>
   const { isAuthenticated } = useAuth();
   useEffect(() => {
     if (isAuthenticated && toolId && toolName && path) {
-      const saved = localStorage.getItem('recents');
-      let recents = saved ? JSON.parse(saved) : [];
+      let recents = safeJSONParse('recents', []);
       recents = recents.filter((r: any) => r.id !== toolId);
       recents.unshift({ id: toolId, name: toolName, path });
       recents = recents.slice(0, 8);
@@ -200,8 +255,7 @@ export const useCurrency = () => {
   
   // Force INR default initially unless saved
   const [currency, setCurrencyState] = useState<string>(() => {
-    const saved = localStorage.getItem('wise_currency');
-    return saved || 'INR'; 
+    return localStorage.getItem('wise_currency') || 'INR'; 
   });
 
   const setCurrency = (c: string) => {

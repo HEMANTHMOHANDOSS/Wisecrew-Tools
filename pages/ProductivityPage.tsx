@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import { Button, Input, ToolLayout, TabNavigation, ResultCard, Select } from '../components/SharedUI';
+import { Button, Input, ToolLayout, TabNavigation, ResultCard, Select, safeJSONParse } from '../components/SharedUI';
 import { Check, Trash2, Clock, Play, Pause, RotateCcw, Download, ListTodo, Activity, StickyNote, Target, CalendarClock } from 'lucide-react';
 import { Todo, Habit, Goal, TimeBlock } from '../types';
 import jsPDF from 'jspdf';
@@ -32,8 +31,7 @@ const ProductivityPage: React.FC = () => {
 
 const TimeBlocking = () => {
   const [blocks, setBlocks] = useState<TimeBlock[]>(() => {
-    const s = localStorage.getItem('timeblocks');
-    return s ? JSON.parse(s) : [];
+    return safeJSONParse('timeblocks', []);
   });
   const [time, setTime] = useState('09:00');
   const [task, setTask] = useState('');
@@ -115,8 +113,7 @@ const GoalPlanner = () => {
 
 const TodoApp = () => {
   const [todos, setTodos] = useState<Todo[]>(() => {
-    const saved = localStorage.getItem('todos');
-    return saved ? JSON.parse(saved) : [];
+    return safeJSONParse('todos', []);
   });
   const [input, setInput] = useState('');
   useEffect(() => localStorage.setItem('todos', JSON.stringify(todos)), [todos]);
@@ -157,7 +154,7 @@ const PomodoroTimer = () => {
 };
 
 const HabitTracker = () => {
-  const [habits, setHabits] = useState<Habit[]>(() => { const s = localStorage.getItem('habits'); return s ? JSON.parse(s) : []; });
+  const [habits, setHabits] = useState<Habit[]>(() => { return safeJSONParse('habits', []); });
   const [newHabit, setNewHabit] = useState('');
   useEffect(() => localStorage.setItem('habits', JSON.stringify(habits)), [habits]);
   const addHabit = (e: React.FormEvent) => { e.preventDefault(); if(!newHabit.trim()) return; setHabits([...habits, { id: Date.now().toString(), title: newHabit, streak: 0, completedDates: [] }]); setNewHabit(''); };
@@ -176,7 +173,10 @@ const HabitTracker = () => {
 };
 
 const DailyNotes = () => {
-  const [note, setNote] = useState(() => localStorage.getItem('dailyNote') || '');
+  const [note, setNote] = useState(() => {
+    if (typeof window === 'undefined') return '';
+    return localStorage.getItem('dailyNote') || '';
+  });
   const [lastSaved, setLastSaved] = useState<string | null>(null);
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => { setNote(e.target.value); };
   useEffect(() => { const timer = setTimeout(() => { localStorage.setItem('dailyNote', note); setLastSaved(new Date().toLocaleTimeString()); }, 1000); return () => clearTimeout(timer); }, [note]);
